@@ -35,7 +35,7 @@ func TestNot(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			not := Not{}
+			not := NewNot()
 
 			result := not.Update(UpdateOpts{TargetIn, tt.args.input})
 

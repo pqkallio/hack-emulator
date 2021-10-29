@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestOr(t *testing.T) {
+func TestNand(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -19,24 +19,24 @@ func TestOr(t *testing.T) {
 		expected Val
 	}{
 		{
-			"0 | 0 = 0",
+			"nand(0, 0) = 1",
 			args{&SingleChan{val: false}, &SingleChan{val: false}},
-			&SingleChan{val: false},
+			&SingleChan{val: true},
 		},
 		{
-			"0 | 1 = 1",
+			"nand(0, 1) = 1",
 			args{&SingleChan{val: false}, &SingleChan{val: true}},
 			&SingleChan{val: true},
 		},
 		{
-			"1 | 0 = 1",
+			"nand(1, 0) = 1",
 			args{&SingleChan{val: true}, &SingleChan{val: false}},
 			&SingleChan{val: true},
 		},
 		{
-			"1 | 1 = 1",
+			"nand(1, 1) = 0",
 			args{&SingleChan{val: true}, &SingleChan{val: true}},
-			&SingleChan{val: true},
+			&SingleChan{val: false},
 		},
 	}
 
@@ -46,9 +46,9 @@ func TestOr(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			or := NewOr()
+			nand := NewNand()
 
-			result := or.Update(UpdateOpts{TargetA, tt.args.a}, UpdateOpts{TargetB, tt.args.b})
+			result := nand.Update(UpdateOpts{TargetA, tt.args.a}, UpdateOpts{TargetB, tt.args.b})
 
 			if !reflect.DeepEqual(tt.expected, result) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected, result)

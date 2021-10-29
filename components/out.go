@@ -91,6 +91,24 @@ func (*InvalidVal) GetSel() uint8 {
 	panic("InvalidVal")
 }
 
+type EmptyVal struct{}
+
+func (*EmptyVal) GetBool() bool {
+	return false
+}
+
+func (*EmptyVal) GetUint16() uint16 {
+	return 0
+}
+
+func (*EmptyVal) GetBoolFromUint16(uint16) bool {
+	return false
+}
+
+func (*EmptyVal) GetSel() uint8 {
+	return 0
+}
+
 type Out interface {
 	Update(...UpdateOpts) Val
 }
