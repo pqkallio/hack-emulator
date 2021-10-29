@@ -3,12 +3,12 @@ package components
 type HalfAdder struct {
 	a   bool
 	b   bool
-	xor Xor
-	and And
+	xor *Xor
+	and *And
 }
 
 func NewHalfAdder() *HalfAdder {
-	return &HalfAdder{false, false, Xor{}, And{}}
+	return &HalfAdder{false, false, NewXor(), NewAnd()}
 }
 
 func (a *HalfAdder) Update(opts ...UpdateOpts) (Val, Val) {

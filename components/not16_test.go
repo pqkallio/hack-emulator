@@ -35,7 +35,7 @@ func TestNot16(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			not := Not16{}
+			not := NewNot16()
 
 			result := not.Update(UpdateOpts{TargetIn, tt.args.input})
 
