@@ -26,7 +26,7 @@ func TestMux16(t *testing.T) {
 				&SixteenChan{0x0010},
 				&SelectChan{0},
 			},
-			&SixteenChan{val: 0x0001},
+			&SixteenChan{0x0001},
 		},
 		{
 			"a: 0x0001, b: 0x0010, sel: 1 = 0x0010",
@@ -35,7 +35,7 @@ func TestMux16(t *testing.T) {
 				&SixteenChan{0x0010},
 				&SelectChan{1},
 			},
-			&SixteenChan{val: 0x0010},
+			&SixteenChan{0x0010},
 		},
 	}
 
