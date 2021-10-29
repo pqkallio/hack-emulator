@@ -1,23 +1,43 @@
 package components
 
 type Or16 struct {
-	a uint16
-	b uint16
+	a   Val
+	b   Val
+	ors [16]*Or
 }
 
 func NewOr16() *Or16 {
-	return &Or16{}
+	ors := [16]*Or{}
+
+	for i := 0; i < 16; i++ {
+		ors[i] = NewOr()
+	}
+
+	return &Or16{&InvalidVal{}, &InvalidVal{}, ors}
 }
 
 func (or16 *Or16) Update(opts ...UpdateOpts) Val {
 	for _, opt := range opts {
 		switch opt.target {
 		case TargetA:
-			or16.a = opt.val.GetUint16()
+			or16.a = opt.val
 		case TargetB:
-			or16.b = opt.val.GetUint16()
+			or16.b = opt.val
 		}
 	}
 
-	return &SixteenChan{or16.a | or16.b}
+	var out uint16
+
+	for i, or := range or16.ors {
+		val := or.Update(
+			UpdateOpts{TargetA, &SingleChan{or16.a.GetBoolFromUint16(uint16(i))}},
+			UpdateOpts{TargetB, &SingleChan{or16.b.GetBoolFromUint16(uint16(i))}},
+		).GetBool()
+
+		if val {
+			out |= 1 << i
+		}
+	}
+
+	return &SixteenChan{out}
 }
