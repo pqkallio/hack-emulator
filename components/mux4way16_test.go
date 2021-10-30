@@ -9,7 +9,8 @@ func TestMux4Way16(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		sel Val
+		sel0 Val
+		sel1 Val
 	}
 
 	tests := []struct {
@@ -20,28 +21,32 @@ func TestMux4Way16(t *testing.T) {
 		{
 			"a: sel 0x00 => 0x0001",
 			args{
-				&SelectChan{0},
+				&SingleChan{false},
+				&SingleChan{false},
 			},
 			&SixteenChan{val: 0x0001},
 		},
 		{
 			"b: sel 0x01 => 0x0002",
 			args{
-				&SelectChan{1},
+				&SingleChan{true},
+				&SingleChan{false},
 			},
 			&SixteenChan{val: 0x0002},
 		},
 		{
 			"c: sel 0x02 => 0x0003",
 			args{
-				&SelectChan{2},
+				&SingleChan{false},
+				&SingleChan{true},
 			},
 			&SixteenChan{val: 0x0003},
 		},
 		{
 			"d: sel 0x03 => 0x0004",
 			args{
-				&SelectChan{3},
+				&SingleChan{true},
+				&SingleChan{true},
 			},
 			&SixteenChan{val: 0x0004},
 		},
@@ -60,7 +65,8 @@ func TestMux4Way16(t *testing.T) {
 				UpdateOpts{TargetB, &SixteenChan{0x0002}},
 				UpdateOpts{TargetC, &SixteenChan{0x0003}},
 				UpdateOpts{TargetD, &SixteenChan{0x0004}},
-				UpdateOpts{TargetSel, tt.args.sel},
+				UpdateOpts{TargetSel0, tt.args.sel0},
+				UpdateOpts{TargetSel1, tt.args.sel1},
 			)
 
 			if !reflect.DeepEqual(tt.expected, result) {

@@ -20,5 +20,7 @@ const (
 	TargetO
 	TargetP
 	TargetIn
-	TargetSel
+	TargetSel0
+	TargetSel1
+	TargetSel2
 )

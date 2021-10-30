@@ -24,7 +24,7 @@ func (mux16 *Mux16) Update(opts ...UpdateOpts) Val {
 			mux16.a = opt.val
 		case TargetB:
 			mux16.b = opt.val
-		case TargetSel:
+		case TargetSel0:
 			mux16.sel = opt.val
 		}
 	}
@@ -35,7 +35,7 @@ func (mux16 *Mux16) Update(opts ...UpdateOpts) Val {
 		val := mux.Update(
 			UpdateOpts{TargetA, &SingleChan{mux16.a.GetBoolFromUint16(uint16(i))}},
 			UpdateOpts{TargetB, &SingleChan{mux16.b.GetBoolFromUint16(uint16(i))}},
-			UpdateOpts{TargetSel, mux16.sel},
+			UpdateOpts{TargetSel0, mux16.sel},
 		).GetBool()
 
 		if val {

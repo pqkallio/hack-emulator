@@ -3,7 +3,7 @@ package components
 type Mux struct {
 	a    Val
 	b    Val
-	sel  bool
+	sel  Val
 	not  *Not
 	and1 *And
 	and2 *And
@@ -13,7 +13,7 @@ type Mux struct {
 func NewMux() *Mux {
 	return &Mux{
 		&InvalidVal{}, &InvalidVal{},
-		false,
+		&InvalidVal{},
 		NewNot(),
 		NewAnd(), NewAnd(),
 		NewOr(),
@@ -27,20 +27,20 @@ func (mux *Mux) Update(opts ...UpdateOpts) Val {
 			mux.a = opt.val
 		case TargetB:
 			mux.b = opt.val
-		case TargetSel:
-			mux.sel = opt.val.GetSel()&1 != 0
+		case TargetSel0:
+			mux.sel = opt.val
 		}
 	}
 
 	sel := mux.sel
 
-	notSel := mux.not.Update(UpdateOpts{TargetIn, &SingleChan{sel}})
+	notSel := mux.not.Update(UpdateOpts{TargetIn, sel})
 	aSel := mux.and1.Update(
 		UpdateOpts{TargetA, mux.a},
 		UpdateOpts{TargetB, notSel},
 	)
 	bSel := mux.and2.Update(
-		UpdateOpts{TargetA, &SingleChan{sel}},
+		UpdateOpts{TargetA, sel},
 		UpdateOpts{TargetB, mux.b},
 	)
 

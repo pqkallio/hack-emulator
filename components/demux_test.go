@@ -23,7 +23,7 @@ func TestDemux(t *testing.T) {
 			"in: 0, sel: 0 => a: 0, b: 0",
 			args{
 				&SingleChan{false},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: false},
@@ -32,7 +32,7 @@ func TestDemux(t *testing.T) {
 			"in: 0, sel: 1 => a: 0, b: 0",
 			args{
 				&SingleChan{false},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: false},
@@ -41,7 +41,7 @@ func TestDemux(t *testing.T) {
 			"in: 1, sel: 0 => a: 1, b: 0",
 			args{
 				&SingleChan{true},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{val: true},
 			&SingleChan{val: false},
@@ -50,7 +50,7 @@ func TestDemux(t *testing.T) {
 			"in: 1, sel: 1 => a: 0, b: 1",
 			args{
 				&SingleChan{true},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: true},
@@ -63,21 +63,19 @@ func TestDemux(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			outA := MockOut{}
-			outB := MockOut{}
-			or := NewDemux(TargetIn, TargetIn, &outA, &outB)
+			demux := NewDemux()
 
-			or.Update(
+			a, b := demux.Update(
 				UpdateOpts{TargetIn, tt.args.in},
-				UpdateOpts{TargetSel, tt.args.sel},
+				UpdateOpts{TargetSel0, tt.args.sel},
 			)
 
-			if !reflect.DeepEqual(tt.expectedA, outA.Result) {
-				t.Errorf("A: expected:\n%+v\ngot:\n%+v", tt.expectedA, outA.Result)
+			if !reflect.DeepEqual(tt.expectedA, a) {
+				t.Errorf("A: expected:\n%+v\ngot:\n%+v", tt.expectedA, a)
 			}
 
-			if !reflect.DeepEqual(tt.expectedB, outB.Result) {
-				t.Errorf("B: expected:\n%+v\ngot:\n%+v", tt.expectedB, outB.Result)
+			if !reflect.DeepEqual(tt.expectedB, b) {
+				t.Errorf("B: expected:\n%+v\ngot:\n%+v", tt.expectedB, b)
 			}
 		})
 	}
