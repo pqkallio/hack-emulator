@@ -1,69 +1,47 @@
 package components
 
 type Demux4Way struct {
-	in      bool
-	sel     uint8
-	targetA Target
-	targetB Target
-	targetC Target
-	targetD Target
-	outA    Out
-	outB    Out
-	outC    Out
-	outD    Out
+	in     Val
+	sel0   Val
+	sel1   Val
+	demux1 *Demux
+	demux2 *Demux
+	demux3 *Demux
 }
 
-func NewDemux4Way(
-	targetA,
-	targetB,
-	targetC,
-	targetD Target,
-	outA,
-	outB,
-	outC,
-	outD Out,
-) *Demux4Way {
+func NewDemux4Way() *Demux4Way {
 	return &Demux4Way{
-		targetA: targetA,
-		targetB: targetB,
-		targetC: targetC,
-		targetD: targetD,
-		outA:    outA,
-		outB:    outB,
-		outC:    outC,
-		outD:    outD,
+		&InvalidVal{},
+		&InvalidVal{}, &InvalidVal{},
+		NewDemux(), NewDemux(), NewDemux(),
 	}
 }
 
-func (demux4Way *Demux4Way) Update(opts ...UpdateOpts) Val {
+func (demux4Way *Demux4Way) Update(opts ...UpdateOpts) (Val, Val, Val, Val) {
 	for _, opt := range opts {
 		switch opt.target {
 		case TargetIn:
-			demux4Way.in = opt.val.GetBool()
-		case TargetSel:
-			demux4Way.sel = opt.val.GetSel()
+			demux4Way.in = opt.val
+		case TargetSel0:
+			demux4Way.sel0 = opt.val
+		case TargetSel1:
+			demux4Way.sel1 = opt.val
 		}
 	}
 
-	sel := demux4Way.sel
+	demux1a, demux1b := demux4Way.demux1.Update(
+		UpdateOpts{TargetIn, demux4Way.in},
+		UpdateOpts{TargetSel0, demux4Way.sel0},
+	)
 
-	demux4Way.outA.Update(UpdateOpts{
-		demux4Way.targetA,
-		&SingleChan{(sel == 0) && demux4Way.in},
-	})
+	a, c := demux4Way.demux2.Update(
+		UpdateOpts{TargetIn, demux1a},
+		UpdateOpts{TargetSel0, demux4Way.sel1},
+	)
+	b, d := demux4Way.demux3.Update(
+		UpdateOpts{TargetIn, demux1b},
+		UpdateOpts{TargetSel0, demux4Way.sel1},
+	)
 
-	demux4Way.outB.Update(UpdateOpts{
-		demux4Way.targetB,
-		&SingleChan{(sel == 1) && demux4Way.in},
-	})
-
-	demux4Way.outC.Update(UpdateOpts{
-		demux4Way.targetC,
-		&SingleChan{(sel == 2) && demux4Way.in},
-	})
-
-	return demux4Way.outD.Update(UpdateOpts{
-		demux4Way.targetD,
-		&SingleChan{(sel == 3) && demux4Way.in},
-	})
+	return a, b, c, d
 }

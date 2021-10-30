@@ -24,7 +24,7 @@ func TestMux16(t *testing.T) {
 			args{
 				&SixteenChan{0x0001},
 				&SixteenChan{0x0010},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SixteenChan{0x0001},
 		},
@@ -33,7 +33,7 @@ func TestMux16(t *testing.T) {
 			args{
 				&SixteenChan{0x0001},
 				&SixteenChan{0x0010},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SixteenChan{0x0010},
 		},
@@ -50,7 +50,7 @@ func TestMux16(t *testing.T) {
 			result := mux16.Update(
 				UpdateOpts{TargetA, tt.args.a},
 				UpdateOpts{TargetB, tt.args.b},
-				UpdateOpts{TargetSel, tt.args.sel},
+				UpdateOpts{TargetSel0, tt.args.sel},
 			)
 
 			if !reflect.DeepEqual(tt.expected, result) {

@@ -9,8 +9,9 @@ func TestDemux4Way(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		in  Val
-		sel Val
+		in   Val
+		sel0 Val
+		sel1 Val
 	}
 
 	tests := []struct {
@@ -25,7 +26,8 @@ func TestDemux4Way(t *testing.T) {
 			"in: 1, sel: 0 => a: 1, b: 0, c: 0, d: 0",
 			args{
 				&SingleChan{true},
-				&SelectChan{0},
+				&SingleChan{false},
+				&SingleChan{false},
 			},
 			&SingleChan{val: true},
 			&SingleChan{val: false},
@@ -36,7 +38,8 @@ func TestDemux4Way(t *testing.T) {
 			"in: 1, sel: 1 => a: 0, b: 1, c: 0, d: 0",
 			args{
 				&SingleChan{true},
-				&SelectChan{1},
+				&SingleChan{true},
+				&SingleChan{false},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: true},
@@ -47,7 +50,8 @@ func TestDemux4Way(t *testing.T) {
 			"in: 1, sel: 2 => a: 0, b: 0, c: 1, d: 0",
 			args{
 				&SingleChan{true},
-				&SelectChan{2},
+				&SingleChan{false},
+				&SingleChan{true},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: false},
@@ -58,7 +62,8 @@ func TestDemux4Way(t *testing.T) {
 			"in: 1, sel: 3 => a: 0, b: 0, c: 0, d: 1",
 			args{
 				&SingleChan{true},
-				&SelectChan{3},
+				&SingleChan{true},
+				&SingleChan{true},
 			},
 			&SingleChan{val: false},
 			&SingleChan{val: false},
@@ -73,41 +78,28 @@ func TestDemux4Way(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			outA := MockOut{}
-			outB := MockOut{}
-			outC := MockOut{}
-			outD := MockOut{}
+			demux4Way := NewDemux4Way()
 
-			demux4Way := NewDemux4Way(
-				TargetIn,
-				TargetIn,
-				TargetIn,
-				TargetIn,
-				&outA,
-				&outB,
-				&outC,
-				&outD,
-			)
-
-			demux4Way.Update(
+			a, b, c, d := demux4Way.Update(
 				UpdateOpts{TargetIn, tt.args.in},
-				UpdateOpts{TargetSel, tt.args.sel},
+				UpdateOpts{TargetSel0, tt.args.sel0},
+				UpdateOpts{TargetSel1, tt.args.sel1},
 			)
 
-			if !reflect.DeepEqual(tt.expectedA, outA.Result) {
-				t.Errorf("A: expected:\n%+v\ngot:\n%+v", tt.expectedA, outA.Result)
+			if !reflect.DeepEqual(tt.expectedA, a) {
+				t.Errorf("A: expected:\n%+v\ngot:\n%+v", tt.expectedA, a)
 			}
 
-			if !reflect.DeepEqual(tt.expectedB, outB.Result) {
-				t.Errorf("B: expected:\n%+v\ngot:\n%+v", tt.expectedB, outB.Result)
+			if !reflect.DeepEqual(tt.expectedB, b) {
+				t.Errorf("B: expected:\n%+v\ngot:\n%+v", tt.expectedB, b)
 			}
 
-			if !reflect.DeepEqual(tt.expectedC, outC.Result) {
-				t.Errorf("C: expected:\n%+v\ngot:\n%+v", tt.expectedC, outC.Result)
+			if !reflect.DeepEqual(tt.expectedC, c) {
+				t.Errorf("C: expected:\n%+v\ngot:\n%+v", tt.expectedC, c)
 			}
 
-			if !reflect.DeepEqual(tt.expectedD, outD.Result) {
-				t.Errorf("D: expected:\n%+v\ngot:\n%+v", tt.expectedD, outD.Result)
+			if !reflect.DeepEqual(tt.expectedD, d) {
+				t.Errorf("D: expected:\n%+v\ngot:\n%+v", tt.expectedD, d)
 			}
 		})
 	}

@@ -24,7 +24,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{false},
 				&SingleChan{false},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{val: false},
 		},
@@ -33,7 +33,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{false},
 				&SingleChan{false},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{val: false},
 		},
@@ -42,7 +42,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{false},
 				&SingleChan{true},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{val: false},
 		},
@@ -51,7 +51,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{false},
 				&SingleChan{true},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{true},
 		},
@@ -60,7 +60,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{true},
 				&SingleChan{false},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{true},
 		},
@@ -69,7 +69,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{true},
 				&SingleChan{false},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{false},
 		},
@@ -78,7 +78,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{true},
 				&SingleChan{true},
-				&SelectChan{0},
+				&SingleChan{false},
 			},
 			&SingleChan{true},
 		},
@@ -87,7 +87,7 @@ func TestMux(t *testing.T) {
 			args{
 				&SingleChan{true},
 				&SingleChan{true},
-				&SelectChan{1},
+				&SingleChan{true},
 			},
 			&SingleChan{true},
 		},
@@ -104,7 +104,7 @@ func TestMux(t *testing.T) {
 			result := mux.Update(
 				UpdateOpts{TargetA, tt.args.a},
 				UpdateOpts{TargetB, tt.args.b},
-				UpdateOpts{TargetSel, tt.args.sel},
+				UpdateOpts{TargetSel0, tt.args.sel},
 			)
 
 			if !reflect.DeepEqual(tt.expected, result) {
