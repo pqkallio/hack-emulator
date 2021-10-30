@@ -68,7 +68,7 @@ func (alu *ALU) Update(opts ...UpdateOpts) (Val, Val, Val) {
 	// preprocess x
 	xZero := alu.zxMux.Update(
 		UpdateOpts{TargetA, alu.x},
-		UpdateOpts{TargetB, &SingleChan{false}},
+		UpdateOpts{TargetB, &SixteenChan{0}},
 		UpdateOpts{TargetSel0, alu.zx},
 	)
 
@@ -84,7 +84,7 @@ func (alu *ALU) Update(opts ...UpdateOpts) (Val, Val, Val) {
 	// preprocess y
 	yZero := alu.zyMux.Update(
 		UpdateOpts{TargetA, alu.y},
-		UpdateOpts{TargetB, &SingleChan{false}},
+		UpdateOpts{TargetB, &SixteenChan{0}},
 		UpdateOpts{TargetSel0, alu.zy},
 	)
 
