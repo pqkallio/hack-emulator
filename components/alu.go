@@ -1,5 +1,14 @@
 package components
 
+// ALU, or the arithmetic-logical unit, performs calculations
+// based on the two 16-bit inputs x and y, and the opcode composed
+// of 6 separate channels:
+//   zx => x = 0
+//   nx => x = !x
+//   zy => y = 0
+//   ny => y = !y
+//   f  => out = two's compliment x + y, else out = x & y
+//   no => out = !out
 type ALU struct {
 	x, y                  Val // inputs
 	zx, nx, zy, ny, f, no Val // flags
@@ -43,6 +52,48 @@ func NewALU() *ALU {
 	}
 }
 
+// Update updates the ALU's channels and returns the result of
+// the computation as three different components in the following
+// order:
+//   1. result of the computation, a SixteenChannel,
+//   2. zero flag, a SingleChannel, true if the result of the computation
+//      equals to 0,
+//   3. negative flag, a SingleChannel, true if the result of the computation
+//      is less than 0.
+//
+// Inputs x and y can be updated with an UpdateOpts to TargetX and TargetY,
+// respectively. The UpdateOpts value must be a SixteenChan.
+//
+// The following table represents the valid opcodes and their output:
+//
+// | zx  | nx  | zy  | ny  |  f  | no  | out |
+// |-----|-----|-----|-----|-----|-----|-----|
+// |  1  |  0  |  1  |  0  |  1  |  0  |  0  |
+// |  1  |  1  |  1  |  1  |  1  |  1  |  1  |
+// |  1  |  1  |  1  |  0  |  1  |  0  | -1  |
+// |  0  |  0  |  1  |  1  |  0  |  0  |  x  |
+// |  1  |  1  |  0  |  0  |  0  |  0  |  y  |
+// |  0  |  0  |  1  |  1  |  0  |  1  | !x  |
+// |  1  |  1  |  0  |  0  |  0  |  1  | !y  |
+// |  0  |  0  |  1  |  1  |  1  |  1  | -x  |
+// |  1  |  1  |  0  |  0  |  1  |  1  | -y  |
+// |  0  |  1  |  1  |  1  |  1  |  1  | x+1 |
+// |  1  |  1  |  0  |  1  |  1  |  1  | y+1 |
+// |  0  |  0  |  1  |  1  |  1  |  0  | x-1 |
+// |  1  |  1  |  0  |  0  |  1  |  0  | y-1 |
+// |  0  |  0  |  0  |  0  |  1  |  0  | x+y |
+// |  0  |  1  |  0  |  0  |  1  |  1  | x-y |
+// |  0  |  0  |  0  |  1  |  1  |  1  | y-x |
+// |  0  |  0  |  0  |  0  |  0  |  0  | x&y |
+// |  0  |  1  |  0  |  1  |  0  |  1  | x|y |
+//
+// The column name to UpdateOpts target is the following:
+//   zx = TargetZeroX
+//   nx = TargetNegX
+//   zy = TargetZeroY
+//   ny = TargetNegY
+//   f  = TargetFunc
+//   no = TargetNegOut
 func (alu *ALU) Update(opts ...UpdateOpts) (Val, Val, Val) {
 	for _, opt := range opts {
 		switch opt.target {

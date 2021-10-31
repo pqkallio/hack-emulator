@@ -970,3 +970,277 @@ func TestOpCode000010(t *testing.T) {
 		})
 	}
 }
+
+// TestOpCode010011 tests that the ALU always returns
+// x-y as a result.
+func TestOpCode010011(t *testing.T) {
+	t.Parallel()
+
+	opCode := uint8(0b010011)
+
+	tests := aluTests{
+		{
+			"5 - 2 = 3",
+			opCodeWithXY(5, 2, opCode),
+			&SixteenChan{3},
+			&SingleChan{false},
+			&SingleChan{false},
+		},
+		{
+			"2 - 5 = -3",
+			opCodeWithXY(2, 5, opCode),
+			&SixteenChan{0xfffd},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+		{
+			"-2 - 4 = -6",
+			opCodeWithXY(0xfffe, 0x0004, opCode),
+			&SixteenChan{0xfffa},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+		{
+			"2 - -4 = 6",
+			opCodeWithXY(0x0002, 0xfffc, opCode),
+			&SixteenChan{0x0006},
+			&SingleChan{false},
+			&SingleChan{false},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			alu := NewALU()
+
+			result, zr, ng := alu.Update(
+				UpdateOpts{TargetX, tt.args.x},
+				UpdateOpts{TargetY, tt.args.y},
+				UpdateOpts{TargetZeroX, tt.args.zx},
+				UpdateOpts{TargetNegX, tt.args.nx},
+				UpdateOpts{TargetZeroY, tt.args.zy},
+				UpdateOpts{TargetNegY, tt.args.ny},
+				UpdateOpts{TargetFunc, tt.args.f},
+				UpdateOpts{TargetNegOut, tt.args.no},
+			)
+
+			if !reflect.DeepEqual(result, tt.expectedResult) {
+				t.Errorf("RESULT: expected:\n%+v\ngot:\n%+v", tt.expectedResult, result)
+			}
+
+			if !reflect.DeepEqual(zr, tt.expectedZeroFlag) {
+				t.Errorf("ZERO FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedZeroFlag, zr)
+			}
+
+			if !reflect.DeepEqual(ng, tt.expectedNegativeFlag) {
+				t.Errorf("NEGATIVE FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedNegativeFlag, ng)
+			}
+		})
+	}
+}
+
+// TestOpCode000111 tests that the ALU always returns
+// y-x as a result.
+func TestOpCode000111(t *testing.T) {
+	t.Parallel()
+
+	opCode := uint8(0b000111)
+
+	tests := aluTests{
+		{
+			"2 - 5 = -3",
+			opCodeWithXY(5, 2, opCode),
+			&SixteenChan{0xfffd},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+		{
+			"5 - 2 = 3",
+			opCodeWithXY(2, 5, opCode),
+			&SixteenChan{3},
+			&SingleChan{false},
+			&SingleChan{false},
+		},
+		{
+			"4 - -2 = 6",
+			opCodeWithXY(0xfffe, 0x0004, opCode),
+			&SixteenChan{6},
+			&SingleChan{false},
+			&SingleChan{false},
+		},
+		{
+			"-4 - 2 = -6",
+			opCodeWithXY(0x0002, 0xfffc, opCode),
+			&SixteenChan{0xfffa},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			alu := NewALU()
+
+			result, zr, ng := alu.Update(
+				UpdateOpts{TargetX, tt.args.x},
+				UpdateOpts{TargetY, tt.args.y},
+				UpdateOpts{TargetZeroX, tt.args.zx},
+				UpdateOpts{TargetNegX, tt.args.nx},
+				UpdateOpts{TargetZeroY, tt.args.zy},
+				UpdateOpts{TargetNegY, tt.args.ny},
+				UpdateOpts{TargetFunc, tt.args.f},
+				UpdateOpts{TargetNegOut, tt.args.no},
+			)
+
+			if !reflect.DeepEqual(result, tt.expectedResult) {
+				t.Errorf("RESULT: expected:\n%+v\ngot:\n%+v", tt.expectedResult, result)
+			}
+
+			if !reflect.DeepEqual(zr, tt.expectedZeroFlag) {
+				t.Errorf("ZERO FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedZeroFlag, zr)
+			}
+
+			if !reflect.DeepEqual(ng, tt.expectedNegativeFlag) {
+				t.Errorf("NEGATIVE FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedNegativeFlag, ng)
+			}
+		})
+	}
+}
+
+// TestOpCode000000 tests that the ALU always returns
+// x&y as a result.
+func TestOpCode000000(t *testing.T) {
+	t.Parallel()
+
+	opCode := uint8(0b000000)
+
+	tests := aluTests{
+		{
+			"0x0000 & 0xffff = 0x0000",
+			opCodeWithXY(0x0000, 0xffff, opCode),
+			&SixteenChan{0x0000},
+			&SingleChan{true},
+			&SingleChan{false},
+		},
+		{
+			"0xffff & 0x0000 = 0x0000",
+			opCodeWithXY(0xffff, 0x0000, opCode),
+			&SixteenChan{0x0000},
+			&SingleChan{true},
+			&SingleChan{false},
+		},
+		{
+			"0xffaf & 0xe0e0 = 0xe0a0",
+			opCodeWithXY(0xffaf, 0xe0e0, opCode),
+			&SixteenChan{0xe0a0},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			alu := NewALU()
+
+			result, zr, ng := alu.Update(
+				UpdateOpts{TargetX, tt.args.x},
+				UpdateOpts{TargetY, tt.args.y},
+				UpdateOpts{TargetZeroX, tt.args.zx},
+				UpdateOpts{TargetNegX, tt.args.nx},
+				UpdateOpts{TargetZeroY, tt.args.zy},
+				UpdateOpts{TargetNegY, tt.args.ny},
+				UpdateOpts{TargetFunc, tt.args.f},
+				UpdateOpts{TargetNegOut, tt.args.no},
+			)
+
+			if !reflect.DeepEqual(result, tt.expectedResult) {
+				t.Errorf("RESULT: expected:\n%+v\ngot:\n%+v", tt.expectedResult, result)
+			}
+
+			if !reflect.DeepEqual(zr, tt.expectedZeroFlag) {
+				t.Errorf("ZERO FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedZeroFlag, zr)
+			}
+
+			if !reflect.DeepEqual(ng, tt.expectedNegativeFlag) {
+				t.Errorf("NEGATIVE FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedNegativeFlag, ng)
+			}
+		})
+	}
+}
+
+// TestOpCode010101 tests that the ALU always returns
+// x&y as a result.
+func TestOpCode010101(t *testing.T) {
+	t.Parallel()
+
+	opCode := uint8(0b010101)
+
+	tests := aluTests{
+		{
+			"0x0000 | 0xffff = 0xffff",
+			opCodeWithXY(0x0000, 0xffff, opCode),
+			&SixteenChan{0xffff},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+		{
+			"0xffff | 0x0000 = 0xffff",
+			opCodeWithXY(0xffff, 0x0000, opCode),
+			&SixteenChan{0xffff},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+		{
+			"0xffaf & 0xe0e0 = 0xffef",
+			opCodeWithXY(0xffaf, 0xe0e0, opCode),
+			&SixteenChan{0xffef},
+			&SingleChan{false},
+			&SingleChan{true},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			alu := NewALU()
+
+			result, zr, ng := alu.Update(
+				UpdateOpts{TargetX, tt.args.x},
+				UpdateOpts{TargetY, tt.args.y},
+				UpdateOpts{TargetZeroX, tt.args.zx},
+				UpdateOpts{TargetNegX, tt.args.nx},
+				UpdateOpts{TargetZeroY, tt.args.zy},
+				UpdateOpts{TargetNegY, tt.args.ny},
+				UpdateOpts{TargetFunc, tt.args.f},
+				UpdateOpts{TargetNegOut, tt.args.no},
+			)
+
+			if !reflect.DeepEqual(result, tt.expectedResult) {
+				t.Errorf("RESULT: expected:\n%+v\ngot:\n%+v", tt.expectedResult, result)
+			}
+
+			if !reflect.DeepEqual(zr, tt.expectedZeroFlag) {
+				t.Errorf("ZERO FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedZeroFlag, zr)
+			}
+
+			if !reflect.DeepEqual(ng, tt.expectedNegativeFlag) {
+				t.Errorf("NEGATIVE FLAG: expected:\n%+v\ngot:\n%+v", tt.expectedNegativeFlag, ng)
+			}
+		})
+	}
+}
