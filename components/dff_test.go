@@ -9,7 +9,7 @@ func TestDFF(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		data, load bool
+		data bool
 	}
 
 	tests := []struct {
@@ -18,71 +18,61 @@ func TestDFF(t *testing.T) {
 		expected []Val
 	}{
 		{
-			"load 0",
+			"load 0, 1, 0",
 			[]args{
 				{
 					false,
-					true,
 				},
 				{
 					true,
-					false,
 				},
 				{
 					false,
-					true,
 				},
 			},
 			[]Val{
 				&SingleChan{false},
 				&SingleChan{false},
-				&SingleChan{false},
-			},
-		},
-		{
-			"load 1",
-			[]args{
-				{
-					true,
-					true,
-				},
-				{
-					false,
-					false,
-				},
-				{
-					true,
-					true,
-				},
-			},
-			[]Val{
-				&SingleChan{true},
-				&SingleChan{true},
 				&SingleChan{true},
 			},
 		},
 		{
-			"load 1, 0",
+			"load 1, 0, 1",
 			[]args{
 				{
 					true,
-					true,
 				},
 				{
 					false,
-					false,
-				},
-				{
-					false,
-					true,
 				},
 				{
 					true,
-					false,
 				},
 			},
 			[]Val{
+				&SingleChan{false},
 				&SingleChan{true},
+				&SingleChan{false},
+			},
+		},
+		{
+			"load 1, 0, 0, 1",
+			[]args{
+				{
+					true,
+				},
+				{
+					false,
+				},
+				{
+					false,
+				},
+				{
+					true,
+				},
+			},
+			[]Val{
+				&SingleChan{false},
 				&SingleChan{true},
 				&SingleChan{false},
 				&SingleChan{false},
@@ -99,17 +89,17 @@ func TestDFF(t *testing.T) {
 			dff := NewDFF()
 
 			for i, arg := range tt.args {
-				dff.Update(
-					UpdateOpts{TargetData, &SingleChan{arg.data}},
-					UpdateOpts{TargetLoad, &SingleChan{arg.load}},
+				actual := dff.Update(
+					UpdateOpts{TargetIn, &SingleChan{arg.data}},
 				)
 
-				actual := dff.Get()
 				expected := tt.expected[i]
 
 				if !reflect.DeepEqual(expected, actual) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", expected, actual)
 				}
+
+				dff.Tick()
 			}
 		})
 	}

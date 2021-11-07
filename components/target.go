@@ -23,4 +23,5 @@ const (
 	TargetSel0
 	TargetSel1
 	TargetSel2
+	TargetLoad
 )

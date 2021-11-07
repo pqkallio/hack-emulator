@@ -1,41 +1,28 @@
 package components
 
 type DFF struct {
-	data Val
+	curr, next SingleChan
 }
 
 func NewDFF() *DFF {
 	return &DFF{
-		&InvalidVal{},
+		SingleChan{}, SingleChan{},
 	}
 }
 
-func (dff *DFF) Update(opts ...UpdateOpts) {
-	var data, load Val
-
+func (dff *DFF) Update(opts ...UpdateOpts) Val {
 	for _, opt := range opts {
 		switch opt.target {
-		case TargetData:
-			data = opt.val
-		case TargetLoad:
-			load = opt.val
+		case TargetIn:
+			if singleChan, ok := opt.val.(*SingleChan); ok {
+				dff.next = *singleChan
+			}
 		}
 	}
 
-	if data == nil || load == nil {
-		return
-	}
-
-	if load.GetBool() {
-		dff.data = data
-	}
+	return &dff.curr
 }
 
-func (dff *DFF) Get() Val {
-	return dff.data
+func (dff *DFF) Tick() {
+	dff.curr = dff.next
 }
-
-const (
-	TargetLoad Target = iota + 200
-	TargetData
-)
