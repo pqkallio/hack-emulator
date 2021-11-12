@@ -25,7 +25,7 @@ func (mux16 *Mux16) Update(a, b uint16, sel bool) uint16 {
 	for i, mux := range mux16.muxs {
 		val := mux.Update(
 			util.GetBoolFromUint16(a, uint16(i)),
-			util.GetBoolFromUint16(a, uint16(i)),
+			util.GetBoolFromUint16(b, uint16(i)),
 			sel,
 		)
 

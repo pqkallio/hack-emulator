@@ -25,7 +25,7 @@ func (mux8Way16 *Mux8Way16) Update(
 		sel0,
 		sel1,
 	)
-	efghMux := mux8Way16.mux4Way161.Update(
+	efghMux := mux8Way16.mux4Way162.Update(
 		e,
 		f,
 		g,
