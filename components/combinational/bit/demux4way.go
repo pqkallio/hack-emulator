@@ -1,0 +1,22 @@
+package bit
+
+type Demux4Way struct {
+	demux1 *Demux
+	demux2 *Demux
+	demux3 *Demux
+}
+
+func NewDemux4Way() *Demux4Way {
+	return &Demux4Way{
+		NewDemux(), NewDemux(), NewDemux(),
+	}
+}
+
+func (demux4Way *Demux4Way) Update(in, sel0, sel1 bool) (bool, bool, bool, bool) {
+	demux1a, demux1b := demux4Way.demux1.Update(in, sel0)
+
+	a, c := demux4Way.demux2.Update(demux1a, sel1)
+	b, d := demux4Way.demux3.Update(demux1b, sel1)
+
+	return a, b, c, d
+}
