@@ -70,7 +70,7 @@ func TestBit(t *testing.T) {
 			bit := NewBit()
 
 			for i, opt := range tt.args.opts {
-				actual := bit.Update(opt.data, opt.load)
+				actual := bit.Update(opt.data, opt.load, nil, 0)
 
 				if !reflect.DeepEqual(tt.expected[i], actual) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected[i], actual)

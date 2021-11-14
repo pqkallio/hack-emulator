@@ -171,7 +171,7 @@ func TestRAM8(t *testing.T) {
 			ram8 := NewRAM8()
 
 			for i, opt := range tt.args.opts {
-				actual := ram8.Update(opt.in, opt.load, opt.addr0, opt.addr1, opt.addr2)
+				actual := ram8.Update(opt.in, opt.load, opt.addr0, opt.addr1, opt.addr2, nil, 0)
 
 				if !reflect.DeepEqual(tt.expected[i], actual) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected[i], actual)

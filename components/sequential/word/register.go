@@ -1,12 +1,14 @@
 package word
 
 import (
+	"github.com/pqkallio/hack-emulator/components"
 	"github.com/pqkallio/hack-emulator/components/sequential/bit"
 	"github.com/pqkallio/hack-emulator/util"
 )
 
 type Register struct {
 	bits [16]*bit.Bit
+	c    chan components.OrderedVal
 }
 
 func NewRegister() *Register {
@@ -16,18 +18,26 @@ func NewRegister() *Register {
 		bits[i] = bit.NewBit()
 	}
 
-	return &Register{bits}
+	return &Register{bits, make(chan components.OrderedVal)}
 }
 
-func (reg *Register) Update(in uint16, load bool) uint16 {
+func (reg *Register) Update(in uint16, load bool, c chan components.OrderedVal16, idx int) uint16 {
 	outVal := uint16(0)
 
 	for i, bit := range reg.bits {
-		val := bit.Update(util.GetBoolFromUint16(in, uint16(i)), load)
+		go bit.Update(util.GetBoolFromUint16(in, uint16(i)), load, reg.c, i)
+	}
 
-		if val {
-			outVal |= 1 << uint16(i)
+	for i := 0; i < 16; i++ {
+		d1 := <-reg.c
+
+		if d1.Val {
+			outVal |= 1 << uint16(d1.Idx)
 		}
+	}
+
+	if c != nil {
+		c <- components.OrderedVal16{outVal, idx}
 	}
 
 	return outVal

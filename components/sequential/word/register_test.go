@@ -90,7 +90,7 @@ func TestRegister(t *testing.T) {
 			reg := NewRegister()
 
 			for i, opt := range tt.args.opts {
-				actual := reg.Update(opt.in, opt.load)
+				actual := reg.Update(opt.in, opt.load, nil, 0)
 
 				if !reflect.DeepEqual(tt.expected[i], actual) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected[i], actual)

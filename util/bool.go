@@ -1,6 +1,9 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 func GetBoolFromUint16(val, offset uint16) bool {
 	if offset > 15 {
@@ -8,4 +11,8 @@ func GetBoolFromUint16(val, offset uint16) bool {
 	}
 
 	return val&(1<<offset) > 0
+}
+
+func RandomBool() bool {
+	return rand.Uint32()%2 == 0
 }
