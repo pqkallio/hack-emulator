@@ -7,8 +7,9 @@ import (
 )
 
 type Register struct {
-	bits [16]*bit.Bit
-	c    chan components.OrderedVal
+	bits     [16]*bit.Bit
+	c        chan components.OrderedVal
+	tickChan chan bool
 }
 
 func NewRegister() *Register {
@@ -18,7 +19,7 @@ func NewRegister() *Register {
 		bits[i] = bit.NewBit()
 	}
 
-	return &Register{bits, make(chan components.OrderedVal)}
+	return &Register{bits, make(chan components.OrderedVal), make(chan bool)}
 }
 
 func (reg *Register) Update(in uint16, load bool, c chan components.OrderedVal16, idx int) uint16 {
@@ -43,8 +44,16 @@ func (reg *Register) Update(in uint16, load bool, c chan components.OrderedVal16
 	return outVal
 }
 
-func (reg *Register) Tick() {
+func (reg *Register) Tick(c chan bool) {
 	for _, bit := range reg.bits {
-		bit.Tick()
+		go bit.Tick(reg.tickChan)
+	}
+
+	for i := 0; i < 16; i++ {
+		<-reg.tickChan
+	}
+
+	if c != nil {
+		c <- true
 	}
 }

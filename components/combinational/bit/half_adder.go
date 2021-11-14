@@ -13,5 +13,5 @@ func NewHalfAdder() *HalfAdder {
 
 func (ha *HalfAdder) Update(a, b bool) (bool, bool) {
 	return ha.xor.Update(a, b),
-		ha.and.Update(a, b)
+		ha.and.Update(a, b, nil, 0)
 }

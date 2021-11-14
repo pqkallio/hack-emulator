@@ -28,6 +28,10 @@ func (bit *Bit) Update(data, load bool, c chan components.OrderedVal, idx int) b
 	return val
 }
 
-func (bit *Bit) Tick() {
+func (bit *Bit) Tick(c chan bool) {
 	bit.dff.Tick()
+
+	if c != nil {
+		c <- true
+	}
 }

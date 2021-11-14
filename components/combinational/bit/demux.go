@@ -14,8 +14,8 @@ func NewDemux() *Demux {
 }
 
 func (demux *Demux) Update(in, sel bool) (bool, bool) {
-	notSel := demux.not.Update(sel)
+	notSel := demux.not.Update(sel, nil, 0)
 
-	return demux.and1.Update(in, notSel),
-		demux.and2.Update(in, sel)
+	return demux.and1.Update(in, notSel, nil, 0),
+		demux.and2.Update(in, sel, nil, 0)
 }

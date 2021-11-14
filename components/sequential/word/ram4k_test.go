@@ -40,7 +40,7 @@ func TestRAM4K(t *testing.T) {
 			t.Errorf("expected:\n%+v\ngot:\n%+v", 0, actual)
 		}
 
-		ram4K.Tick()
+		ram4K.Tick(nil)
 
 		actual = ram4K.Update(val, false,
 			origAddr0, origAddr1, origAddr2,
@@ -54,7 +54,7 @@ func TestRAM4K(t *testing.T) {
 			t.Errorf("expected:\n%+v\ngot:\n%+v", val, actual)
 		}
 
-		ram4K.Tick()
+		ram4K.Tick(nil)
 
 		for j := 0; j < 8; j++ {
 			addr0 := util.RandomBool()
@@ -100,7 +100,7 @@ func TestRAM4K(t *testing.T) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", expected, actual)
 			}
 
-			ram4K.Tick()
+			ram4K.Tick(nil)
 		}
 	}
 }

@@ -101,7 +101,7 @@ func TestMux(t *testing.T) {
 
 			mux := NewMux()
 
-			result := mux.Update(tt.args.a, tt.args.b, tt.args.sel)
+			result := mux.Update(tt.args.a, tt.args.b, tt.args.sel, nil, 0)
 
 			if !reflect.DeepEqual(tt.expected, result) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected, result)

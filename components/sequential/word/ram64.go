@@ -18,6 +18,7 @@ type RAM64 struct {
 	ramH      *RAM8
 	mux8Way16 *word.Mux8Way16
 	c         chan components.OrderedVal16
+	tickChan  chan bool
 }
 
 func NewRAM64() *RAM64 {
@@ -27,6 +28,7 @@ func NewRAM64() *RAM64 {
 		NewRAM8(), NewRAM8(), NewRAM8(), NewRAM8(),
 		word.NewMux8Way16(),
 		make(chan components.OrderedVal16),
+		make(chan bool),
 	}
 }
 
@@ -74,13 +76,21 @@ func (r *RAM64) Update(
 	return val
 }
 
-func (r *RAM64) Tick() {
-	r.ramA.Tick()
-	r.ramB.Tick()
-	r.ramC.Tick()
-	r.ramD.Tick()
-	r.ramE.Tick()
-	r.ramF.Tick()
-	r.ramG.Tick()
-	r.ramH.Tick()
+func (r *RAM64) Tick(c chan bool) {
+	go r.ramA.Tick(r.tickChan)
+	go r.ramB.Tick(r.tickChan)
+	go r.ramC.Tick(r.tickChan)
+	go r.ramD.Tick(r.tickChan)
+	go r.ramE.Tick(r.tickChan)
+	go r.ramF.Tick(r.tickChan)
+	go r.ramG.Tick(r.tickChan)
+	go r.ramH.Tick(r.tickChan)
+
+	for i := 0; i < 8; i++ {
+		<-r.tickChan
+	}
+
+	if c != nil {
+		c <- true
+	}
 }

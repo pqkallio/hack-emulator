@@ -51,6 +51,7 @@ func TestMux16(t *testing.T) {
 				tt.args.a,
 				tt.args.b,
 				tt.args.sel,
+				nil, 0,
 			)
 
 			if !reflect.DeepEqual(tt.expected, result) {

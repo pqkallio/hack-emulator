@@ -1,12 +1,14 @@
 package word
 
 import (
+	"github.com/pqkallio/hack-emulator/components"
 	"github.com/pqkallio/hack-emulator/components/combinational/bit"
 	"github.com/pqkallio/hack-emulator/util"
 )
 
 type Not16 struct {
 	nots [16]*bit.Not
+	c    chan components.OrderedVal
 }
 
 func NewNot16() *Not16 {
@@ -16,17 +18,21 @@ func NewNot16() *Not16 {
 		nots[i] = bit.NewNot()
 	}
 
-	return &Not16{nots}
+	return &Not16{nots, make(chan components.OrderedVal)}
 }
 
 func (not16 *Not16) Update(in uint16) uint16 {
 	var out uint16
 
 	for i, not := range not16.nots {
-		val := not.Update(util.GetBoolFromUint16(in, uint16(i)))
+		go not.Update(util.GetBoolFromUint16(in, uint16(i)), not16.c, i)
+	}
 
-		if val {
-			out |= 1 << i
+	for i := 0; i < 16; i++ {
+		ov := <-not16.c
+
+		if ov.Val {
+			out |= 1 << ov.Idx
 		}
 	}
 

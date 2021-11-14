@@ -177,7 +177,7 @@ func TestRAM8(t *testing.T) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected[i], actual)
 				}
 
-				ram8.Tick()
+				ram8.Tick(nil)
 			}
 		})
 	}

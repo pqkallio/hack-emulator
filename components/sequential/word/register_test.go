@@ -96,7 +96,7 @@ func TestRegister(t *testing.T) {
 					t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected[i], actual)
 				}
 
-				reg.Tick()
+				reg.Tick(nil)
 			}
 		})
 	}

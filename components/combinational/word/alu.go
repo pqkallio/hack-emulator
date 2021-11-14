@@ -98,23 +98,23 @@ func (alu *ALU) Update(
 	zx, nx, zy, ny, f, no bool,
 ) (uint16, bool, bool) {
 	// preprocess x
-	xZero := alu.zxMux.Update(x, 0, zx)
+	xZero := alu.zxMux.Update(x, 0, zx, nil, 0)
 	xNeg := alu.nxNot.Update(xZero)
-	xPreprocessed := alu.nxMux.Update(xZero, xNeg, nx)
+	xPreprocessed := alu.nxMux.Update(xZero, xNeg, nx, nil, 0)
 
 	// preprocess y
-	yZero := alu.zyMux.Update(y, 0, zy)
+	yZero := alu.zyMux.Update(y, 0, zy, nil, 0)
 	yNeg := alu.nyNot.Update(yZero)
-	yPreprocessed := alu.nyMux.Update(yZero, yNeg, ny)
+	yPreprocessed := alu.nyMux.Update(yZero, yNeg, ny, nil, 0)
 
 	// function(x, y)
 	xyAdd := alu.fAdd.Update(xPreprocessed, yPreprocessed)
 	xyAnd := alu.fAnd.Update(xPreprocessed, yPreprocessed)
-	xyF := alu.fMux.Update(xyAnd, xyAdd, f)
+	xyF := alu.fMux.Update(xyAnd, xyAdd, f, nil, 0)
 
 	// postprocess xyF
 	negXy := alu.noNot.Update(xyF)
-	result := alu.noMux.Update(xyF, negXy, no)
+	result := alu.noMux.Update(xyF, negXy, no, nil, 0)
 
 	// set status flags
 	ng := util.GetBoolFromUint16(result, 15)
@@ -139,8 +139,8 @@ func (alu *ALU) Update(
 		util.GetBoolFromUint16(result, 14),
 		util.GetBoolFromUint16(result, 15),
 	)
-	zrFlag := alu.zrOr.Update(loByteOr, hiByteOr)
-	zr := alu.zrNot.Update(zrFlag)
+	zrFlag := alu.zrOr.Update(loByteOr, hiByteOr, nil, 0)
+	zr := alu.zrNot.Update(zrFlag, nil, 0)
 
 	return result, zr, ng
 }

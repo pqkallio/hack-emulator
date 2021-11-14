@@ -14,6 +14,7 @@ type RAM16K struct {
 	ramD      *RAM4K
 	mux4Way16 *word.Mux4Way16
 	c         chan components.OrderedVal16
+	tickChan  chan bool
 }
 
 func NewRAM16K() *RAM16K {
@@ -22,6 +23,7 @@ func NewRAM16K() *RAM16K {
 		NewRAM4K(), NewRAM4K(), NewRAM4K(), NewRAM4K(),
 		word.NewMux4Way16(),
 		make(chan components.OrderedVal16),
+		make(chan bool),
 	}
 }
 
@@ -57,6 +59,7 @@ func (r *RAM16K) Update(
 	val := r.mux4Way16.Update(
 		vals[0], vals[1], vals[2], vals[3],
 		addr0, addr1,
+		nil, 0,
 	)
 
 	if ch != nil {
@@ -67,8 +70,12 @@ func (r *RAM16K) Update(
 }
 
 func (r *RAM16K) Tick() {
-	r.ramA.Tick()
-	r.ramB.Tick()
-	r.ramC.Tick()
-	r.ramD.Tick()
+	go r.ramA.Tick(r.tickChan)
+	go r.ramB.Tick(r.tickChan)
+	go r.ramC.Tick(r.tickChan)
+	go r.ramD.Tick(r.tickChan)
+
+	for i := 0; i < 4; i++ {
+		<-r.tickChan
+	}
 }

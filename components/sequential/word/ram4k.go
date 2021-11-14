@@ -18,6 +18,7 @@ type RAM4K struct {
 	ramH      *RAM512
 	mux8Way16 *word.Mux8Way16
 	c         chan components.OrderedVal16
+	tickChan  chan bool
 }
 
 func NewRAM4K() *RAM4K {
@@ -27,6 +28,7 @@ func NewRAM4K() *RAM4K {
 		NewRAM512(), NewRAM512(), NewRAM512(), NewRAM512(),
 		word.NewMux8Way16(),
 		make(chan components.OrderedVal16),
+		make(chan bool),
 	}
 }
 
@@ -77,13 +79,21 @@ func (r *RAM4K) Update(
 	return val
 }
 
-func (r *RAM4K) Tick() {
-	r.ramA.Tick()
-	r.ramB.Tick()
-	r.ramC.Tick()
-	r.ramD.Tick()
-	r.ramE.Tick()
-	r.ramF.Tick()
-	r.ramG.Tick()
-	r.ramH.Tick()
+func (r *RAM4K) Tick(c chan bool) {
+	go r.ramA.Tick(r.tickChan)
+	go r.ramB.Tick(r.tickChan)
+	go r.ramC.Tick(r.tickChan)
+	go r.ramD.Tick(r.tickChan)
+	go r.ramE.Tick(r.tickChan)
+	go r.ramF.Tick(r.tickChan)
+	go r.ramG.Tick(r.tickChan)
+	go r.ramH.Tick(r.tickChan)
+
+	for i := 0; i < 8; i++ {
+		<-r.tickChan
+	}
+
+	if c != nil {
+		c <- true
+	}
 }
