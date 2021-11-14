@@ -37,7 +37,7 @@ func TestNot(t *testing.T) {
 
 			not := NewNot()
 
-			result := not.Update(tt.args.in)
+			result := not.Update(tt.args.in, nil, 0)
 
 			if !reflect.DeepEqual(tt.expected, result) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected, result)

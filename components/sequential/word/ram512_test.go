@@ -36,7 +36,7 @@ func TestRAM512(t *testing.T) {
 			t.Errorf("expected:\n%+v\ngot:\n%+v", 0, actual)
 		}
 
-		ram512.Tick()
+		ram512.Tick(nil)
 
 		actual = ram512.Update(val, false,
 			origAddr0, origAddr1, origAddr2,
@@ -49,7 +49,7 @@ func TestRAM512(t *testing.T) {
 			t.Errorf("expected:\n%+v\ngot:\n%+v", val, actual)
 		}
 
-		ram512.Tick()
+		ram512.Tick(nil)
 
 		for j := 0; j < 8; j++ {
 			addr0 := util.RandomBool()
@@ -88,7 +88,7 @@ func TestRAM512(t *testing.T) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", expected, actual)
 			}
 
-			ram512.Tick()
+			ram512.Tick(nil)
 		}
 	}
 }

@@ -67,6 +67,7 @@ func TestMux4Way16(t *testing.T) {
 				0x0004,
 				tt.args.sel0,
 				tt.args.sel1,
+				nil, 0,
 			)
 
 			if !reflect.DeepEqual(tt.expected, result) {

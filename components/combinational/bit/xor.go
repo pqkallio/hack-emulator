@@ -17,10 +17,10 @@ func NewXor() *Xor {
 }
 
 func (xor *Xor) Update(a, b bool) bool {
-	nota := xor.not1.Update(a)
-	notb := xor.not1.Update(b)
-	aAndNotb := xor.and1.Update(a, notb)
-	notaAndb := xor.and2.Update(nota, b)
+	nota := xor.not1.Update(a, nil, 0)
+	notb := xor.not1.Update(b, nil, 0)
+	aAndNotb := xor.and1.Update(a, notb, nil, 0)
+	notaAndb := xor.and2.Update(nota, b, nil, 0)
 
-	return xor.or.Update(aAndNotb, notaAndb)
+	return xor.or.Update(aAndNotb, notaAndb, nil, 0)
 }

@@ -48,7 +48,7 @@ func TestOr(t *testing.T) {
 
 			or := NewOr()
 
-			result := or.Update(tt.args.a, tt.args.b)
+			result := or.Update(tt.args.a, tt.args.b, nil, 0)
 
 			if !reflect.DeepEqual(tt.expected, result) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected, result)

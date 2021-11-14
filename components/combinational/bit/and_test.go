@@ -48,7 +48,7 @@ func TestAnd(t *testing.T) {
 
 			and := NewAnd()
 
-			result := and.Update(tt.args.a, tt.args.b)
+			result := and.Update(tt.args.a, tt.args.b, nil, 0)
 
 			if !reflect.DeepEqual(tt.expected, result) {
 				t.Errorf("expected:\n%+v\ngot:\n%+v", tt.expected, result)
