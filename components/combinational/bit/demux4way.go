@@ -1,5 +1,6 @@
 package bit
 
+// Demux4Way is a 4-way demultiplexer.
 type Demux4Way struct {
 	demux1 *Demux
 	demux2 *Demux
@@ -12,6 +13,18 @@ func NewDemux4Way() *Demux4Way {
 	}
 }
 
+// Update evaluates the circuit.
+//
+// Inputs:
+// 	in: input bit
+// 	sel0: select bit 0
+// 	sel1: select bit 1
+//
+// Output:
+//  a: in if !sel0 and !sel1, false otherwise
+//  b: in if sel0 and !sel1, false otherwise
+//  c: in if !sel0 and sel1, false otherwise
+//  d: in if sel0 and sel1, false otherwise
 func (demux4Way *Demux4Way) Update(in, sel0, sel1 bool) (bool, bool, bool, bool) {
 	demux1a, demux1b := demux4Way.demux1.Update(in, sel0)
 

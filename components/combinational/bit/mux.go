@@ -2,6 +2,7 @@ package bit
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// Mux, or a mutliplexer is a combinational component that selects between two inputs.
 type Mux struct {
 	not  *Not
 	and1 *And
@@ -17,6 +18,13 @@ func NewMux() *Mux {
 	}
 }
 
+// Update updates the component.
+// In:
+// 	a - input a
+// 	b - input b
+// 	sel - selection
+// Out:
+// 	val - a if !sel, b otherwise
 func (mux *Mux) Update(a, b, sel bool, c chan components.OrderedVal, idx int) bool {
 	notSel := mux.not.Update(sel, nil, 0)
 	aSel := mux.and1.Update(a, notSel, nil, 0)

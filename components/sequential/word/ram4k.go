@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/components/combinational/word"
 )
 
+// RAM4K is a 4096-register 16-bit RAM.
 type RAM4K struct {
 	demux8Way *bit.Demux8Way
 	ramA      *RAM512

@@ -2,6 +2,14 @@ package bit
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// And is a component that performs a logical AND operation on two inputs.
+//
+// Truth table:
+// 		A	B	AND
+// 		0	0	0
+// 		0	1	0
+// 		1	0	0
+// 		1	1	1
 type And struct {
 	nand1, nand2, nand3 *Nand
 }

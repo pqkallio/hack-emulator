@@ -1,5 +1,6 @@
 package bit
 
+// Demux8Way is a 8-way demultiplexer.
 type Demux8Way struct {
 	demux1 *Demux
 	demux2 *Demux
@@ -17,6 +18,23 @@ func NewDemux8Way() *Demux8Way {
 	}
 }
 
+// Update evaluates the circuit.
+//
+// Inputs:
+// 	in: input bit
+// 	sel0: select bit 0
+// 	sel1: select bit 1
+// 	sel2: select bit 2
+//
+// Output:
+//  a: in if !sel0 and !sel1 and !sel2
+//  b: in if sel0 and !sel1 and !sel2
+//  c: in if !sel0 and sel1 and !sel2
+//  d: in if sel0 and sel1 and !sel2
+//  e: in if !sel0 and !sel1 and sel2
+//  f: in if sel0 and !sel1 and sel2
+//  g: in if !sel0 and sel1 and sel2
+//  h: in if sel0 and sel1 and sel2
 func (demux8Way *Demux8Way) Update(
 	in, sel0, sel1, sel2 bool,
 ) (bool, bool, bool, bool, bool, bool, bool, bool) {

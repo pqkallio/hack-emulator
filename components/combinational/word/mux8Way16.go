@@ -2,6 +2,7 @@ package word
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// Mux8Way16 is a 8-way 16-bit multiplexer with 1-bit select lines.
 type Mux8Way16 struct {
 	mux4Way161 *Mux4Way16
 	mux4Way162 *Mux4Way16

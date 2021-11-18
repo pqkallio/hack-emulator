@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/util"
 )
 
+// Or16 is a 16-bit OR gate.
 type Or16 struct {
 	ors [16]*bit.Or
 	c   chan components.OrderedVal

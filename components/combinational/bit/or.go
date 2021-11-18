@@ -2,6 +2,15 @@ package bit
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// Or is a combinational component that returns true if either of the inputs is true.
+//
+// Truth table:
+//
+// 		A	B	Output
+// 		0	0	0
+// 		0	1	1
+// 		1	0	1
+// 		1	1	1
 type Or struct {
 	not1 *Not
 	not2 *Not

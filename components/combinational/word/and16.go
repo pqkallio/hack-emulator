@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/util"
 )
 
+// And16 is a 16-bit AND gate.
 type And16 struct {
 	ands [16]*bit.And
 	c    chan components.OrderedVal

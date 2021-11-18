@@ -1,5 +1,6 @@
 package word
 
+// Inc16 is a 16-bit adder that increments the input by 1.
 type Inc16 struct {
 	add16 *Add16
 }

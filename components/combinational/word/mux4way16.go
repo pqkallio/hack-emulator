@@ -2,6 +2,7 @@ package word
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// Mux4Way16 is a 4-way 16-bit multiplexer with 1-bit select lines.
 type Mux4Way16 struct {
 	mux161 *Mux16
 	mux162 *Mux16

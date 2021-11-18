@@ -1,5 +1,15 @@
 package bit
 
+// Xor is combinational logic exclusive or gate, returning true
+// if A != B.
+//
+// Truth table:
+//
+//	A	B	Xor
+//	0	0	0
+//	0	1	1
+//	1	0	1
+//	1	1	0
 type Xor struct {
 	not1 *Not
 	not2 *Not

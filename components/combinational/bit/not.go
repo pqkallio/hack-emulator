@@ -2,6 +2,12 @@ package bit
 
 import "github.com/pqkallio/hack-emulator/components"
 
+// Not is a component that performs a logical NOT operation on a single input.
+//
+// Truth table:
+// 		IN	NOT
+// 		0	1
+// 		1	0
 type Not struct {
 	nand *Nand
 }
