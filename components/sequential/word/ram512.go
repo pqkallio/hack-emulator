@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/components/combinational/word"
 )
 
+// RAM512 is a 512-register 16-bit wide RAM.
 type RAM512 struct {
 	demux8Way *bit.Demux8Way
 	ramA      *RAM64

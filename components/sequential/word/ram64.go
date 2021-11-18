@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/components/combinational/word"
 )
 
+// RAM64 is a 64-register 16-bit RAM.
 type RAM64 struct {
 	demux8Way *bit.Demux8Way
 	ramA      *RAM8

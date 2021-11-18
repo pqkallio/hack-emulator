@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/util"
 )
 
+// Register is a 16-bit register.
 type Register struct {
 	bits     [16]*bit.Bit
 	c        chan components.OrderedVal

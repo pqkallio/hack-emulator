@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/util"
 )
 
+// Not16 is a 16-bit NOT gate.
 type Not16 struct {
 	nots [16]*bit.Not
 	c    chan components.OrderedVal

@@ -7,6 +7,7 @@ import (
 
 const nFullAdders = 15
 
+// Add16 is a 16-bit adder.
 type Add16 struct {
 	ha  *bit.HalfAdder
 	fas [nFullAdders]*bit.FullAdder
@@ -25,13 +26,15 @@ func NewAdd16() *Add16 {
 	}
 }
 
-func (and16 *Add16) Update(a, b uint16) uint16 {
+// Updates adds the input values and returns the sum.
+// Carry bit after the operation is ignored.
+func (add16 *Add16) Update(a, b uint16) uint16 {
 	var (
 		out   uint16
 		carry bool
 	)
 
-	sum, carry := and16.ha.Update(
+	sum, carry := add16.ha.Update(
 		util.GetBoolFromUint16(a, 0),
 		util.GetBoolFromUint16(b, 0),
 	)
@@ -41,7 +44,7 @@ func (and16 *Add16) Update(a, b uint16) uint16 {
 	}
 
 	for i := uint16(0); i < nFullAdders; i++ {
-		sum, carry = and16.fas[i].Update(
+		sum, carry = add16.fas[i].Update(
 			util.GetBoolFromUint16(a, i+1),
 			util.GetBoolFromUint16(b, i+1),
 			carry,

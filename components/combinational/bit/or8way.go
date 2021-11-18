@@ -1,5 +1,6 @@
 package bit
 
+// Or8Way is a 8-way OR gate, evaluating to true if any of the inputs are true.
 type Or8Way struct {
 	or1 *Or
 	or2 *Or

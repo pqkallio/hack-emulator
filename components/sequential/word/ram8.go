@@ -6,6 +6,7 @@ import (
 	"github.com/pqkallio/hack-emulator/components/combinational/word"
 )
 
+// RAM8 is a 8-register 16-bit RAM component.
 type RAM8 struct {
 	demux8Way *bit.Demux8Way
 	regA      *Register
