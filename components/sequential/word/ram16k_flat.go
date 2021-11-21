@@ -3,17 +3,16 @@ package word
 import "github.com/pqkallio/hack-emulator/components"
 
 type Ram16kFlat struct {
-	mem [16384]*Register
+	mem   [16384]uint16
+	dirty [][2]uint16
+	c     chan bool
 }
 
 func NewRam16kFlat() *Ram16kFlat {
-	mem := [16384]*Register{}
-
-	for i := 0; i < 16384; i++ {
-		mem[i] = NewRegister()
+	return &Ram16kFlat{
+		dirty: make([][2]uint16, 0, 16384),
+		c:     make(chan bool),
 	}
-
-	return &Ram16kFlat{mem}
 }
 
 func (r *Ram16kFlat) Update(
@@ -71,5 +70,17 @@ func (r *Ram16kFlat) Update(
 		addr |= 0x0001
 	}
 
-	return r.mem[addr].Update(in, load, nil, 0)
+	if load {
+		r.dirty = append(r.dirty, [2]uint16{addr, in})
+	}
+
+	return r.mem[addr]
+}
+
+func (r *Ram16kFlat) Tick(c chan bool) {
+	for _, entry := range r.dirty {
+		r.mem[entry[0]] = entry[1]
+	}
+
+	r.dirty = r.dirty[:0]
 }
