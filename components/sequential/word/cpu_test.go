@@ -210,6 +210,24 @@ func TestJMP(t *testing.T) {
 	testCPU(t, test)
 }
 
+func TestReset(t *testing.T) {
+	t.Parallel()
+
+	test := args{
+		name: "reset",
+		args: []cpuUpdateArgs{
+			{instruction: 0b00110000_00111001},              // @12345
+			{instruction: 0b11101111_11010000, reset: true}, // D=1
+		},
+		expected: []cpuUpdateResult{
+			{0, 0, 1, false},
+			{1, 12345, 0, false},
+		},
+	}
+
+	testCPU(t, test)
+}
+
 func testCPU(t *testing.T, test args) {
 	t.Helper()
 
@@ -231,7 +249,6 @@ func testCPU(t *testing.T, test args) {
 		}
 
 		cpu.Tick()
-		cpu.Tock()
 
 		pc := cpu.Fetch()
 

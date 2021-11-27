@@ -163,9 +163,6 @@ func (cpu *CPU) Fetch() (pc uint16) {
 func (cpu *CPU) Tick() {
 	cpu.aRegister.Tick(nil)
 	cpu.dRegister.Tick(nil)
-}
-
-func (cpu *CPU) Tock() {
 	cpu.pc.Tick()
 }
 
