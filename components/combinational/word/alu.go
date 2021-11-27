@@ -96,7 +96,7 @@ func NewALU() *ALU {
 func (alu *ALU) Update(
 	x, y uint16,
 	zx, nx, zy, ny, f, no bool,
-) (uint16, bool, bool) {
+) (result uint16, zr bool, ng bool) {
 	// preprocess x
 	xZero := alu.zxMux.Update(x, 0, zx, nil, 0)
 	xNeg := alu.nxNot.Update(xZero)
@@ -114,10 +114,10 @@ func (alu *ALU) Update(
 
 	// postprocess xyF
 	negXy := alu.noNot.Update(xyF)
-	result := alu.noMux.Update(xyF, negXy, no, nil, 0)
+	result = alu.noMux.Update(xyF, negXy, no, nil, 0)
 
 	// set status flags
-	ng := util.GetBoolFromUint16(result, 15)
+	ng = util.GetBoolFromUint16(result, 15)
 
 	loByteOr := alu.zrOr8Way1.Update(
 		util.GetBoolFromUint16(result, 0),
@@ -140,7 +140,7 @@ func (alu *ALU) Update(
 		util.GetBoolFromUint16(result, 15),
 	)
 	zrFlag := alu.zrOr.Update(loByteOr, hiByteOr, nil, 0)
-	zr := alu.zrNot.Update(zrFlag, nil, 0)
+	zr = alu.zrNot.Update(zrFlag, nil, 0)
 
 	return result, zr, ng
 }
