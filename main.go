@@ -13,18 +13,18 @@ const (
 )
 
 var (
-	scr = word.NewScreenMem()
+	screenMem = word.NewScreenMem()
 )
 
 func main() {
 	runtime.LockOSThread()
 
-	window, prog, terminate := graphics.Init()
-	defer terminate()
+	screen := graphics.NewScreen(screenMem)
+	defer screen.Terminate()
 
-	for !window.ShouldClose() {
+	for !screen.ShouldClose() {
 		t := time.Now()
-		graphics.Draw(scr, window, prog)
+		screen.Draw()
 		time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
 }

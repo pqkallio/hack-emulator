@@ -2,6 +2,21 @@ package graphics
 
 import "github.com/go-gl/gl/v4.6-core/gl"
 
+const (
+	pixelHeight = (1 / float32(rows)) * scale
+	pixelWidth  = (1 / float32(cols)) * scale
+)
+
+var square = []float32{
+	0, 1, 0,
+	0, 0, 0,
+	1, 0, 0,
+
+	0, 1, 0,
+	1, 1, 0,
+	1, 0, 0,
+}
+
 type pixel struct {
 	drawable uint32
 
