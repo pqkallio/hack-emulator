@@ -1,7 +1,5 @@
 package graphics
 
-type Interface interface {
+type graphics interface {
 	Draw()
-	ShouldClose() bool
-	Terminate()
 }

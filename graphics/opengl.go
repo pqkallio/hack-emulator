@@ -6,13 +6,10 @@ import (
 	"strings"
 
 	"github.com/go-gl/gl/v4.6-core/gl"
-	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/pqkallio/hack-emulator/hack/components/sequential/word"
 )
 
 const (
-	screenHeight = scale * rows
-	screenWidth  = scale * cols
-
 	vertexShaderSource = `
     #version 450
     in vec3 vp;
@@ -30,30 +27,43 @@ const (
 ` + "\x00"
 )
 
-func initGlfw() *glfw.Window {
-	if err := glfw.Init(); err != nil {
-		panic(err)
-	}
-
-	glfw.WindowHint(glfw.Resizable, glfw.False)
-	glfw.WindowHint(glfw.ContextVersionMajor, 3)
-	glfw.WindowHint(glfw.ContextVersionMinor, 3)
-	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
-	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
-
-	window, err := glfw.CreateWindow(screenWidth, screenHeight, "Hack emulator", nil, nil)
-	if err != nil {
-		panic(err)
-	}
-	window.MakeContextCurrent()
-
-	return window
+type openGL struct {
+	nCols  int
+	pixels [][]*pixel
+	mem    *word.ScreenMem
 }
 
-func initOpenGL() uint32 {
+func newOpenGL(nRows, nCols, scale int, mem *word.ScreenMem) *openGL {
+	initOpenGL()
+	return &openGL{nCols, makePixels(nRows, nCols, scale), mem}
+}
+
+func (o *openGL) Draw() {
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+	screenMem := o.mem.GetMem()
+
+	for i, val := range screenMem {
+		mask := uint16(0b10000000_00000000)
+
+		for j := 0; j < 16; j++ {
+			if val&mask != 0 {
+				cellPtr := i*16 + j
+				y := cellPtr / o.nCols
+				x := cellPtr % o.nCols
+				o.pixels[y][x].draw()
+			}
+
+			mask >>= 1
+		}
+	}
+}
+
+func initOpenGL() {
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
+
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	log.Println("OpenGL version", version)
 
@@ -61,17 +71,18 @@ func initOpenGL() uint32 {
 	if err != nil {
 		panic(err)
 	}
+
 	fragmentShader, err := compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
 	if err != nil {
 		panic(err)
 	}
+
 	prog := gl.CreateProgram()
+
 	gl.AttachShader(prog, vertexShader)
 	gl.AttachShader(prog, fragmentShader)
 	gl.LinkProgram(prog)
 	gl.UseProgram(prog)
-
-	return prog
 }
 
 func compileShader(source string, shaderType uint32) (uint32, error) {
@@ -84,6 +95,7 @@ func compileShader(source string, shaderType uint32) (uint32, error) {
 
 	var status int32
 	gl.GetShaderiv(shader, gl.COMPILE_STATUS, &status)
+
 	if status == gl.FALSE {
 		var logLength int32
 		gl.GetShaderiv(shader, gl.INFO_LOG_LENGTH, &logLength)
@@ -95,4 +107,24 @@ func compileShader(source string, shaderType uint32) (uint32, error) {
 	}
 
 	return shader, nil
+}
+
+func makePixels(nRows, nCols, scale int) [][]*pixel {
+	h := (1 / float32(nRows)) * float32(scale)
+	w := (1 / float32(nCols)) * float32(scale)
+
+	pixels := make([][]*pixel, nRows)
+
+	for y := 0; y < nRows; y++ {
+		row := make([]*pixel, nCols)
+
+		for x := 0; x < nCols; x++ {
+			c := newPixel(x, y, h, w)
+			row[x] = c
+		}
+
+		pixels[y] = row
+	}
+
+	return pixels
 }

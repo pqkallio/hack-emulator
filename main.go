@@ -19,7 +19,7 @@ var (
 func main() {
 	runtime.LockOSThread()
 
-	screen := graphics.NewScreen(screenMem)
+	screen := graphics.NewScreen(256, 512, 2, screenMem)
 	defer screen.Terminate()
 
 	for !screen.ShouldClose() {

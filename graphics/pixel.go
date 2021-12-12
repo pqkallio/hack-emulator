@@ -2,11 +2,6 @@ package graphics
 
 import "github.com/go-gl/gl/v4.6-core/gl"
 
-const (
-	pixelHeight = (1 / float32(rows)) * scale
-	pixelWidth  = (1 / float32(cols)) * scale
-)
-
 var square = []float32{
 	0, 1, 0,
 	0, 0, 0,
@@ -29,15 +24,15 @@ func (c *pixel) draw() {
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(square)/3))
 }
 
-func newPixel(x, y int) *pixel {
+func newPixel(x, y int, h, w float32) *pixel {
 	points := make([]float32, len(square))
 	copy(points, square)
 
 	for i, p := range points {
 		if i%3 == 0 {
-			points[i] = p*pixelWidth - 1 + float32(x)*pixelWidth
+			points[i] = w*(p+float32(x)) - 1
 		} else if i%3 == 1 {
-			points[i] = (p-1)*pixelHeight + 1 - float32(y)*pixelHeight
+			points[i] = h*((p-1)-float32(y)) + 1
 		}
 	}
 
