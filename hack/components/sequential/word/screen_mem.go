@@ -31,3 +31,11 @@ func (sm *ScreenMem) Tick() {
 
 	sm.dirty = sm.dirty[:0]
 }
+
+func (sm *ScreenMem) GetMem() [8192]uint16 {
+	return sm.mem
+}
+
+func (sm *ScreenMem) GetDirty() [][2]uint16 {
+	return sm.dirty
+}
