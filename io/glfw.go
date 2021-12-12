@@ -1,15 +1,22 @@
 package graphics
 
-import "github.com/go-gl/glfw/v3.3/glfw"
+import (
+	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/pqkallio/hack-emulator/hack/components/combinational/word"
+)
 
 type glfwWindow struct {
 	window *glfw.Window
+	kbd    *word.KeyboardMem
 }
 
-func newGlfwWindow(nRows, nCols, scale int) *glfwWindow {
+func newGlfwWindow(nRows, nCols, scale int, kbd *word.KeyboardMem) *glfwWindow {
 	window := initGlfw(nRows*scale, nCols*scale)
 
-	return &glfwWindow{window}
+	glfwWindow := &glfwWindow{window, kbd}
+	window.SetKeyCallback(glfwWindow.keyCallback)
+
+	return glfwWindow
 }
 
 func (w *glfwWindow) Terminate() {
@@ -26,6 +33,16 @@ func (w *glfwWindow) PollEvents() {
 
 func (w *glfwWindow) SwapBuffers() {
 	w.window.SwapBuffers()
+}
+
+func (w *glfwWindow) keyCallback(wnd *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if action == glfw.Press {
+		if mappedKey, ok := keyMap[keyMod{key, mods}]; ok {
+			w.kbd.Update(mappedKey)
+		}
+	} else if action == glfw.Release {
+		w.kbd.Update(0)
+	}
 }
 
 func initGlfw(h, w int) *glfw.Window {

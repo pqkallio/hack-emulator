@@ -4,8 +4,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/pqkallio/hack-emulator/graphics"
-	"github.com/pqkallio/hack-emulator/hack/components/sequential/word"
+	combWord "github.com/pqkallio/hack-emulator/hack/components/combinational/word"
+	seqWord "github.com/pqkallio/hack-emulator/hack/components/sequential/word"
+	graphics "github.com/pqkallio/hack-emulator/io"
 )
 
 const (
@@ -13,18 +14,19 @@ const (
 )
 
 var (
-	screenMem = word.NewScreenMem()
+	screenMem = seqWord.NewScreenMem()
+	kbdMem    = combWord.NewKeyboardMem()
 )
 
 func main() {
 	runtime.LockOSThread()
 
-	screen := graphics.NewScreen(256, 512, 2, screenMem)
-	defer screen.Terminate()
+	io := graphics.NewScreenAndKeyboard(256, 512, 2, screenMem, kbdMem)
+	defer io.Terminate()
 
-	for !screen.ShouldClose() {
+	for !io.ShouldClose() {
 		t := time.Now()
-		screen.Draw()
+		io.Process()
 		time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
 }
