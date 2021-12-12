@@ -1,4 +1,4 @@
-package graphics
+package io
 
 import "github.com/go-gl/gl/v4.6-core/gl"
 

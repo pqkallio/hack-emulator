@@ -6,7 +6,7 @@ import (
 
 	combWord "github.com/pqkallio/hack-emulator/hack/components/combinational/word"
 	seqWord "github.com/pqkallio/hack-emulator/hack/components/sequential/word"
-	graphics "github.com/pqkallio/hack-emulator/io"
+	"github.com/pqkallio/hack-emulator/io"
 )
 
 const (
@@ -21,12 +21,12 @@ var (
 func main() {
 	runtime.LockOSThread()
 
-	io := graphics.NewScreenAndKeyboard(256, 512, 2, screenMem, kbdMem)
-	defer io.Terminate()
+	peripheral := io.NewScreenAndKeyboard(256, 512, 2, screenMem, kbdMem)
+	defer peripheral.Terminate()
 
-	for !io.ShouldClose() {
+	for !peripheral.ShouldClose() {
 		t := time.Now()
-		io.Process()
+		peripheral.Process()
 		time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
 }

@@ -1,4 +1,4 @@
-package graphics
+package io
 
 import (
 	combWord "github.com/pqkallio/hack-emulator/hack/components/combinational/word"
