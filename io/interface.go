@@ -1,7 +1,7 @@
-package graphics
+package io
 
 type Interface interface {
-	Draw()
+	Process()
 	ShouldClose() bool
 	Terminate()
 }
