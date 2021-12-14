@@ -46,8 +46,10 @@ func (c *Computer) Run() {
 // input:
 // 	reset: reset the computer, setting the program counter to 0
 func (c *Computer) Next(reset bool) {
-	pc, memOut, memAddr, writeToMem := c.cpu.Fetch()     // get the instruction address
-	instruction := c.rom.Get(pc)                         // get the instruction
+	pc, memOut, memAddr, writeToMem := c.cpu.Fetch() // get the instruction address
+	instruction := c.rom.Get(pc)                     // get the instruction
+	// decoded := util.DecodeInstruction(instruction)       // decode the instruction
+	// log.Printf("%04X: %s", pc, decoded)                  // log the instruction
 	c.memVal = c.mmu.Update(memOut, memAddr, writeToMem) // update memory
 	c.cpu.Execute(instruction, c.memVal, reset)          // execute the instruction
 	c.cpu.Tick()                                         // clock pulse for CPU

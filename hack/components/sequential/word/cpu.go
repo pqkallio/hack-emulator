@@ -18,7 +18,8 @@ type CPU struct {
 	jmpZeroAnd         *bit.And
 	jmpPosAnd          *bit.And
 	notNg              *bit.Not
-	posXor             *bit.Xor
+	notZr              *bit.Not
+	posAnd             *bit.And
 	posOrZero          *bit.Or
 	negOrPos           *bit.Or
 	negOrZero          *bit.Or
@@ -54,8 +55,8 @@ func NewCPU() *CPU {
 		word.NewALU(),
 		NewPC(),
 		bit.NewAnd(), bit.NewAnd(), bit.NewAnd(),
-		bit.NewNot(),
-		bit.NewXor(),
+		bit.NewNot(), bit.NewNot(),
+		bit.NewAnd(),
 		bit.NewOr(), bit.NewOr(), bit.NewOr(), bit.NewOr(),
 		bit.NewOr8Way(),
 		bit.NewNot(),
@@ -115,7 +116,8 @@ func (cpu *CPU) Execute(instruction, in uint16, reset bool) {
 	isCInstrAndZr := cpu.cInstrAndZr.Update(l.isCInstr, zr, nil, 0)
 	isCInstrAndNg := cpu.cInstrAndNg.Update(l.isCInstr, ng, nil, 0)
 	isNotNg := cpu.notNg.Update(isCInstrAndNg, nil, 0)
-	isPos := cpu.posXor.Update(isCInstrAndZr, isNotNg)
+	isNotZr := cpu.notZr.Update(isCInstrAndZr, nil, 0)
+	isPos := cpu.posAnd.Update(isNotZr, isNotNg, nil, 0)
 	isCInstrAndJ1 := cpu.cInstrAndJ1.Update(l.isCInstr, l.j1, nil, 0)
 	isCInstrAndJ2 := cpu.cInstrAndJ2.Update(l.isCInstr, l.j2, nil, 0)
 	isCInstrAndJ3 := cpu.cInstrAndJ3.Update(l.isCInstr, l.j3, nil, 0)

@@ -23,6 +23,7 @@ func Run(instr []uint16) {
 	ram := seqWord.NewRam16kFlat()
 	rom := combWord.NewROM32KFlat()
 
+	ram.Write(0, 16)
 	rom.Flash(instr)
 
 	peripheral := io.NewScreenAndKeyboard(256, 512, 2, screenMem, kbdMem)
