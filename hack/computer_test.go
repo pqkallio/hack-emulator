@@ -26,8 +26,9 @@ func TestAdd(t *testing.T) {
 	ram := seq.NewRam16kFlat()
 	scr := seq.NewScreenMem()
 	kbd := word.NewKeyboardMem()
+	reset := false
 
-	computer := NewComputer(ram, scr, kbd, rom)
+	computer := NewComputer(ram, scr, kbd, rom, &reset)
 
 	for i := 0; i < 10; i++ {
 		computer.Next(false)
@@ -70,8 +71,9 @@ func TestMax(t *testing.T) {
 	ram := seq.NewRam16kFlat()
 	scr := seq.NewScreenMem()
 	kbd := word.NewKeyboardMem()
+	reset := false
 
-	computer := NewComputer(ram, scr, kbd, rom)
+	computer := NewComputer(ram, scr, kbd, rom, &reset)
 
 	ram.Write(0, uint16(3))
 	ram.Write(1, uint16(5))
@@ -142,8 +144,9 @@ func TestRect(t *testing.T) {
 	ram := seq.NewRam16kFlat()
 	scr := seq.NewScreenMem()
 	kbd := word.NewKeyboardMem()
+	reset := false
 
-	computer := NewComputer(ram, scr, kbd, rom)
+	computer := NewComputer(ram, scr, kbd, rom, &reset)
 
 	ram.Write(0, 4)
 

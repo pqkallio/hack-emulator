@@ -11,6 +11,7 @@ type Computer struct {
 	rom    *word.ROM32KFlat
 	cpu    *seq.CPU
 	mmu    *seq.MMU
+	reset  *bool
 }
 
 // NewComputer creates a new HACK computer.
@@ -19,12 +20,25 @@ type Computer struct {
 // 	scr: screen memory (read by screen, read/write by CPU)
 // 	kbd: keyboard memory (write by keyboard, read by CPU)
 // 	rom: ROM memory (read by CPU, contains the Hack program)
-func NewComputer(ram *seq.Ram16kFlat, scr *seq.ScreenMem, kbd *word.KeyboardMem, rom *word.ROM32KFlat) *Computer {
+func NewComputer(
+	ram *seq.Ram16kFlat,
+	scr *seq.ScreenMem,
+	kbd *word.KeyboardMem,
+	rom *word.ROM32KFlat,
+	reset *bool,
+) *Computer {
 	return &Computer{
 		memVal: 0,
 		rom:    rom,
 		cpu:    seq.NewCPU(),
 		mmu:    seq.NewMMU(ram, scr, kbd),
+		reset:  reset,
+	}
+}
+
+func (c *Computer) Run() {
+	for {
+		c.Next(*c.reset)
 	}
 }
 
